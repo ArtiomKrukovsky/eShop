@@ -1,0 +1,2 @@
+# eShop
+DDD + CQRS
