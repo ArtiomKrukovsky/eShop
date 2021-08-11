@@ -13,14 +13,11 @@ namespace Ordering.Infastructure.EntityConfigurations
 
             orderConfiguration.HasKey(o => o.Id);
 
-            orderConfiguration.Property(o => o.Id)
-                .UseHiLo("orderseq", OrderingContext.DEFAULT_SCHEMA);
+            //orderConfiguration.Property(o => o.Id)
+            //    .UseHiLo("orderseq", OrderingContext.DEFAULT_SCHEMA);
 
             //Address value object persisted as owned entity type supported since EF Core 2.0
-            orderConfiguration.OwnsOne(o => o.Address, a =>
-            {
-                a.WithOwner();
-            });
+            orderConfiguration.OwnsOne(o => o.Address);
 
             orderConfiguration
                 .Property<DateTime>("_orderDate")

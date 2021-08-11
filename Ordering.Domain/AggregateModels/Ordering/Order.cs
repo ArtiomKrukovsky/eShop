@@ -53,7 +53,7 @@ namespace Ordering.Domain.AggregateModels.Ordering
 
             // Add the OrderStarterDomainEvent to the domain events collection 
             // to be raised/dispatched when comitting changes into the Database [ After DbContext.SaveChanges() ]
-            AddOrderStartedDomainEvent(userId, userName, cardTypeId, cardNumber,cardSecurityNumber, cardHolderName, cardExpiration);
+            // AddOrderStartedDomainEvent(userId, userName, cardTypeId, cardNumber,cardSecurityNumber, cardHolderName, cardExpiration);
         }
 
         // DDD Patterns comment
@@ -85,86 +85,86 @@ namespace Ordering.Domain.AggregateModels.Ordering
             }
         }
 
-        public void SetAwaitingValidationStatus()
-        {
-            if (_orderStatusId == OrderStatus.Submitted.Id)
-            {
-                AddDomainEvent(new OrderStatusChangedToAwaitingValidationDomainEvent(Id, _orderItems));
-                _orderStatusId = OrderStatus.AwaitingValidation.Id;
-            }
-        }
+        //public void SetAwaitingValidationStatus()
+        //{
+        //    if (_orderStatusId == OrderStatus.Submitted.Id)
+        //    {
+        //        AddDomainEvent(new OrderStatusChangedToAwaitingValidationDomainEvent(Id, _orderItems));
+        //        _orderStatusId = OrderStatus.AwaitingValidation.Id;
+        //    }
+        //}
 
-        public void SetStockConfirmedStatus()
-        {
-            if (_orderStatusId == OrderStatus.AwaitingValidation.Id)
-            {
-                AddDomainEvent(new OrderStatusChangedToStockConfirmedDomainEvent(Id));
+        //public void SetStockConfirmedStatus()
+        //{
+        //    if (_orderStatusId == OrderStatus.AwaitingValidation.Id)
+        //    {
+        //        AddDomainEvent(new OrderStatusChangedToStockConfirmedDomainEvent(Id));
 
-                _orderStatusId = OrderStatus.StockConfirmed.Id;
-                _description = "All the items were confirmed with available stock.";
-            }
-        }
+        //        _orderStatusId = OrderStatus.StockConfirmed.Id;
+        //        _description = "All the items were confirmed with available stock.";
+        //    }
+        //}
 
-        public void SetPaidStatus()
-        {
-            if (_orderStatusId == OrderStatus.StockConfirmed.Id)
-            {
-                AddDomainEvent(new OrderStatusChangedToPaidDomainEvent(Id, OrderItems));
+        //public void SetPaidStatus()
+        //{
+        //    if (_orderStatusId == OrderStatus.StockConfirmed.Id)
+        //    {
+        //        AddDomainEvent(new OrderStatusChangedToPaidDomainEvent(Id, OrderItems));
 
-                _orderStatusId = OrderStatus.Paid.Id;
-                _description = "The payment was performed at a simulated \"American Bank checking bank account ending on XX35071\"";
-            }
-        }
+        //        _orderStatusId = OrderStatus.Paid.Id;
+        //        _description = "The payment was performed at a simulated \"American Bank checking bank account ending on XX35071\"";
+        //    }
+        //}
 
-        public void SetShippedStatus()
-        {
-            if (_orderStatusId != OrderStatus.Paid.Id)
-            {
-                StatusChangeException(OrderStatus.Shipped);
-            }
+        //public void SetShippedStatus()
+        //{
+        //    if (_orderStatusId != OrderStatus.Paid.Id)
+        //    {
+        //        StatusChangeException(OrderStatus.Shipped);
+        //    }
 
-            _orderStatusId = OrderStatus.Shipped.Id;
-            _description = "The order was shipped.";
-            AddDomainEvent(new OrderShippedDomainEvent(this));
-        }
+        //    _orderStatusId = OrderStatus.Shipped.Id;
+        //    _description = "The order was shipped.";
+        //    AddDomainEvent(new OrderShippedDomainEvent(this));
+        //}
 
-        public void SetCancelledStatus()
-        {
-            if (_orderStatusId == OrderStatus.Paid.Id ||
-                _orderStatusId == OrderStatus.Shipped.Id)
-            {
-                StatusChangeException(OrderStatus.Cancelled);
-            }
+        //public void SetCancelledStatus()
+        //{
+        //    if (_orderStatusId == OrderStatus.Paid.Id ||
+        //        _orderStatusId == OrderStatus.Shipped.Id)
+        //    {
+        //        StatusChangeException(OrderStatus.Cancelled);
+        //    }
 
-            _orderStatusId = OrderStatus.Cancelled.Id;
-            _description = $"The order was cancelled.";
-            AddDomainEvent(new OrderCancelledDomainEvent(this));
-        }
+        //    _orderStatusId = OrderStatus.Cancelled.Id;
+        //    _description = $"The order was cancelled.";
+        //    AddDomainEvent(new OrderCancelledDomainEvent(this));
+        //}
 
-        public void SetCancelledStatusWhenStockIsRejected(IEnumerable<int> orderStockRejectedItems)
-        {
-            if (_orderStatusId == OrderStatus.AwaitingValidation.Id)
-            {
-                _orderStatusId = OrderStatus.Cancelled.Id;
+        //public void SetCancelledStatusWhenStockIsRejected(IEnumerable<int> orderStockRejectedItems)
+        //{
+        //    if (_orderStatusId == OrderStatus.AwaitingValidation.Id)
+        //    {
+        //        _orderStatusId = OrderStatus.Cancelled.Id;
 
-                var itemsStockRejectedProductNames = OrderItems
-                    .Where(c => orderStockRejectedItems.Contains(c.ProductId))
-                    .Select(c => c.GetOrderItemProductName());
+        //        var itemsStockRejectedProductNames = OrderItems
+        //            .Where(c => orderStockRejectedItems.Contains(c.ProductId))
+        //            .Select(c => c.GetOrderItemProductName());
 
-                var itemsStockRejectedDescription = string.Join(", ", itemsStockRejectedProductNames);
-                _description = $"The product items don't have stock: ({itemsStockRejectedDescription}).";
-            }
-        }
+        //        var itemsStockRejectedDescription = string.Join(", ", itemsStockRejectedProductNames);
+        //        _description = $"The product items don't have stock: ({itemsStockRejectedDescription}).";
+        //    }
+        //}
 
-        private void AddOrderStartedDomainEvent(string userId, string userName, int cardTypeId, string cardNumber,
-                string cardSecurityNumber, string cardHolderName, DateTime cardExpiration)
-        {
-            var orderStartedDomainEvent = new OrderStartedDomainEvent(this, userId, userName, cardTypeId,
-                                                                      cardNumber, cardSecurityNumber,
-                                                                      cardHolderName, cardExpiration);
+        //private void AddOrderStartedDomainEvent(string userId, string userName, int cardTypeId, string cardNumber,
+        //        string cardSecurityNumber, string cardHolderName, DateTime cardExpiration)
+        //{
+        //    var orderStartedDomainEvent = new OrderStartedDomainEvent(this, userId, userName, cardTypeId,
+        //                                                              cardNumber, cardSecurityNumber,
+        //                                                              cardHolderName, cardExpiration);
 
-            this.AddDomainEvent(orderStartedDomainEvent);
-        }
+        //    this.AddDomainEvent(orderStartedDomainEvent);
+        //}
 
         private void StatusChangeException(OrderStatus orderStatusToChange)
         {

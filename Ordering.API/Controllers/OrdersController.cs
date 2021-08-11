@@ -1,9 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Ordering.API.Commands;
-using System;
+using Ordering.API.DTOs;
+using Ordering.API.Queries;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Ordering.API.Controllers
@@ -13,24 +13,26 @@ namespace Ordering.API.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IOrderQueries _orderQueries;
 
-        public OrdersController(IMediator mediator)
+        public OrdersController(IMediator mediator, IOrderQueries orderQueries)
         {
             _mediator = mediator;
+            _orderQueries = orderQueries;
         }
 
-        // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public async Task<ActionResult<IEnumerable<OrderSummaryDTO>>> GetOrdersAsync()
         {
-            return new string[] { "value1", "value2" };
+            var orders = await _orderQueries.GetOrdersAsync();
+            return Ok(orders);
         }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        [HttpGet("{orderId:int}")]
+        public async Task<ActionResult<OrderDTO>> GetOrderAsync(int orderId)
         {
-            return "value";
+            var order = await _orderQueries.GetOrderAsync(orderId);
+            return Ok(order);
         }
 
         [HttpPost]
