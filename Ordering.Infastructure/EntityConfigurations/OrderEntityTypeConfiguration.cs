@@ -13,11 +13,17 @@ namespace Ordering.Infrastructure.EntityConfigurations
 
             orderConfiguration.HasKey(o => o.Id);
 
+            orderConfiguration.Ignore(b => b.DomainEvents);
+
             orderConfiguration.Property(o => o.Id)
                 .UseHiLo("orderseq", OrderingContext.DEFAULT_SCHEMA);
 
-            //Address value object persisted as owned entity type supported since EF Core 2.0
-            orderConfiguration.OwnsOne(o => o.Address);
+            // Address value object persisted as owned entity type supported since EF Core 2.0
+            orderConfiguration
+                .OwnsOne(o => o.Address, a =>
+                {
+                    a.WithOwner();
+                });
 
             orderConfiguration
                 .Property<DateTime>("_orderDate")
@@ -31,11 +37,6 @@ namespace Ordering.Infrastructure.EntityConfigurations
                 .HasColumnName("OrderStatusId")
                 .IsRequired();
 
-            orderConfiguration
-                .Property<int?>("_paymentMethodId")
-                .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("PaymentMethodId")
-                .IsRequired(false);
 
             orderConfiguration.Property<string>("Description").IsRequired(false);
 
