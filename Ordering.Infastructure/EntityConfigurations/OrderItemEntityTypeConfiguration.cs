@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Ordering.Domain.AggregateModels.Ordering;
 
-namespace Ordering.Infastructure.EntityConfigurations
+namespace Ordering.Infrastructure.EntityConfigurations
 {
     class OrderItemEntityTypeConfiguration : IEntityTypeConfiguration<OrderItem>
     {
@@ -12,8 +12,8 @@ namespace Ordering.Infastructure.EntityConfigurations
 
             orderItemConfiguration.HasKey(o => o.Id);
 
-            //orderItemConfiguration.Property(o => o.Id)
-            //    .UseHiLo("orderitemseq");
+            orderItemConfiguration.Property(o => o.Id)
+                .UseHiLo("orderitemseq");
 
             orderItemConfiguration.Property<int>("OrderId")
                 .IsRequired();

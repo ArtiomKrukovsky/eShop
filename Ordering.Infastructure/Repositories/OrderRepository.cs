@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Ordering.Infastructure.Repositories
+namespace Ordering.Infrastructure.Repositories
 {
     public class OrderRepository : IOrderRepository
     {

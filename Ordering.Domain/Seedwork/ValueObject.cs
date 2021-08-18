@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Ordering.Domain.Seedwork
@@ -31,7 +30,7 @@ namespace Ordering.Domain.Seedwork
 
             var other = (ValueObject)obj;
 
-            return this.GetEqualityComponents().SequenceEqual(other.GetEqualityComponents());
+            return GetEqualityComponents().SequenceEqual(other.GetEqualityComponents());
         }
 
         public override int GetHashCode()
@@ -43,7 +42,7 @@ namespace Ordering.Domain.Seedwork
 
         public ValueObject GetCopy()
         {
-            return this.MemberwiseClone() as ValueObject;
+            return MemberwiseClone() as ValueObject;
         }
     }
 }

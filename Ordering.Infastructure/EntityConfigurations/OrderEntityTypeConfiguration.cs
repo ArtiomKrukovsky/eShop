@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Ordering.Domain.AggregateModels.Ordering;
 using System;
 
-namespace Ordering.Infastructure.EntityConfigurations
+namespace Ordering.Infrastructure.EntityConfigurations
 {
     class OrderEntityTypeConfiguration : IEntityTypeConfiguration<Order>
     {
@@ -13,8 +13,8 @@ namespace Ordering.Infastructure.EntityConfigurations
 
             orderConfiguration.HasKey(o => o.Id);
 
-            //orderConfiguration.Property(o => o.Id)
-            //    .UseHiLo("orderseq", OrderingContext.DEFAULT_SCHEMA);
+            orderConfiguration.Property(o => o.Id)
+                .UseHiLo("orderseq", OrderingContext.DEFAULT_SCHEMA);
 
             //Address value object persisted as owned entity type supported since EF Core 2.0
             orderConfiguration.OwnsOne(o => o.Address);

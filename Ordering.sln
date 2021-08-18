@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.1259
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30711.63
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.API", "Ordering.API\Ordering.API.csproj", "{C71A898B-0F58-47CA-8A13-46E335908227}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.API", "Ordering.API\Ordering.API.csproj", "{C71A898B-0F58-47CA-8A13-46E335908227}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.Domain", "Ordering.Domain\Ordering.Domain.csproj", "{2C74781D-E5D1-4BCD-97CD-9C10C6F5FDD7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.Domain", "Ordering.Domain\Ordering.Domain.csproj", "{2C74781D-E5D1-4BCD-97CD-9C10C6F5FDD7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.Infastructure", "Ordering.Infastructure\Ordering.Infastructure.csproj", "{C2E56A40-5817-4EED-BCB6-73F3BED0DBF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.Infrastructure", "Ordering.Infastructure\Ordering.Infrastructure.csproj", "{C2E56A40-5817-4EED-BCB6-73F3BED0DBF9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

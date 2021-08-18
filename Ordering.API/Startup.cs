@@ -7,11 +7,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Ordering.Infastructure.Repositories;
+using Ordering.Infrastructure.Repositories;
 using Ordering.API.Behaviours;
 using Ordering.Domain.AggregateModels.Ordering;
 using Microsoft.EntityFrameworkCore;
-using Ordering.Infastructure;
+using Ordering.Infrastructure;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Diagnostics;
@@ -67,16 +67,15 @@ namespace Ordering.API
         public static IServiceCollection AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<OrderingContext>(options =>
-            {
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
-                    sqlServerOptionsAction: sqlOptions =>
-                    {
-                        sqlOptions.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
-                        sqlOptions.EnableRetryOnFailure(maxRetryCount: 15, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
-                    });
-            },
-                       ServiceLifetime.Scoped  //Showing explicitly that the DbContext is shared across the HTTP request scope (graph of objects started in the HTTP request)
-                   );
+                {
+                    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+                        sqlServerOptionsAction: sqlOptions =>
+                        {
+                            sqlOptions.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
+                            sqlOptions.EnableRetryOnFailure(maxRetryCount: 15, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
+                        });
+                }, ServiceLifetime.Scoped  //Showing explicitly that the DbContext is shared across the HTTP request scope (graph of objects started in the HTTP request)
+            );
 
             return services;
         }
