@@ -13,32 +13,30 @@ namespace Ordering.API.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly IOrderQueries _orderQueries;
 
-        public OrdersController(IMediator mediator, IOrderQueries orderQueries)
+        public OrdersController(IMediator mediator)
         {
             _mediator = mediator;
-            _orderQueries = orderQueries;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OrderSummaryDTO>>> GetOrdersAsync()
         {
-            var orders = await _orderQueries.GetOrdersAsync();
+            var orders = await _mediator.Send(new GetOrdersQuery());
             return Ok(orders);
         }
 
         [HttpGet("{orderId:int}")]
         public async Task<ActionResult<OrderDTO>> GetOrderAsync(int orderId)
         {
-            var order = await _orderQueries.GetOrderAsync(orderId);
+            var order = await _mediator.Send(new GetOrderQuery(orderId));
             return Ok(order);
         }
 
         [HttpPost]
         public async Task<ActionResult<bool>> CreateOrderAsync([FromBody] CreateOrderCommand createOrderCommand)
         {
-           return await _mediator.Send(createOrderCommand);
+            return await _mediator.Send(createOrderCommand);
         }
 
         // PUT api/values/5
