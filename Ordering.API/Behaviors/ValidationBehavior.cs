@@ -1,18 +1,18 @@
-﻿using FluentValidation;
-using MediatR;
-using Ordering.Domain.Exceptions;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentValidation;
+using MediatR;
+using Ordering.Domain.Exceptions;
 
-namespace Ordering.API.Behaviours
+namespace Ordering.API.Behaviors
 {
-    public class ValidationBehaviour<TRequest, TResponse>
+    public class ValidationBehavior<TRequest, TResponse>
          : IPipelineBehavior<TRequest, TResponse>
     {
         private readonly IEnumerable<IValidator<TRequest>> _validators;
-        public ValidationBehaviour(IEnumerable<IValidator<TRequest>> validators) => _validators = validators;
+        public ValidationBehavior(IEnumerable<IValidator<TRequest>> validators) => _validators = validators;
 
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken,
             RequestHandlerDelegate<TResponse> next)

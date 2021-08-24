@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 using Dapper;
 using MediatR;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Options;
 using Ordering.API.DTOs;
 using Ordering.API.Interfaces;
+using Ordering.API.Options;
 
 namespace Ordering.API.Queries
 {
@@ -27,9 +29,10 @@ namespace Ordering.API.Queries
     {
         private readonly string _connectionString;
 
-        public GetOrderQueryHandler(string constr)
+        public GetOrderQueryHandler(IOptions<DatabaseOptions> databaseOptions)
         {
-            _connectionString = !string.IsNullOrWhiteSpace(constr) ? constr : throw new ArgumentNullException(nameof(constr));
+            var connectionString = databaseOptions.Value.DefaultConnection;
+            _connectionString = !string.IsNullOrWhiteSpace(connectionString) ? connectionString : throw new ArgumentNullException(nameof(connectionString));
         }
 
         public async Task<OrderDTO> Handle(GetOrderQuery request, CancellationToken cancellationToken)
@@ -46,7 +49,7 @@ namespace Ordering.API.Queries
                         LEFT JOIN ordering.Orderitems oi ON o.Id = oi.orderid 
                         LEFT JOIN ordering.orderstatus os on o.OrderStatusId = os.Id
                         WHERE o.Id=@id"
-                , new { request.OrderId }
+                , new { id = request.OrderId }
             );
 
             if (result.AsList().Count == 0)

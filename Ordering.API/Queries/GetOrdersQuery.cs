@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using Dapper;
 using MediatR;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Options;
 using Ordering.API.DTOs;
 using Ordering.API.Interfaces;
+using Ordering.API.Options;
 
 namespace Ordering.API.Queries
 {
@@ -22,9 +24,10 @@ namespace Ordering.API.Queries
     {
         private readonly string _connectionString;
 
-        public GetOrdersQueryHandler(string constr)
+        public GetOrdersQueryHandler(IOptions<DatabaseOptions> databaseOptions)
         {
-            _connectionString = !string.IsNullOrWhiteSpace(constr) ? constr : throw new ArgumentNullException(nameof(constr));
+            var connectionString = databaseOptions.Value.DefaultConnection;
+            _connectionString = !string.IsNullOrWhiteSpace(connectionString) ? connectionString : throw new ArgumentNullException(nameof(connectionString));
         }
 
         public async Task<OrderSummaryDTO> Handle(GetOrdersQuery request, CancellationToken cancellationToken)

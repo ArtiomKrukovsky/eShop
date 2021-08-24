@@ -8,13 +8,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Ordering.Infrastructure.Repositories;
-using Ordering.API.Behaviours;
 using Ordering.Domain.AggregateModels.Ordering;
 using Microsoft.EntityFrameworkCore;
 using Ordering.Infrastructure;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Diagnostics;
+using Ordering.API.Behaviors;
+using Ordering.API.Extensions;
+using Ordering.API.Options;
 using Ordering.API.Queries;
 
 namespace Ordering.API
@@ -31,14 +33,19 @@ namespace Ordering.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllers();
+
+            // Configure DB
             services.AddCustomDbContext(Configuration);
 
-            services.AddControllers();
+            // Configure Mediator
             services.AddMediatR(Assembly.GetExecutingAssembly());
-
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
+            services.AddOptions(Configuration);
+
+            // Configure Repositories
             services.AddScoped<IOrderRepository, OrderRepository>();
         }
 
@@ -67,23 +74,4 @@ namespace Ordering.API
             });
         }
     }
-
-    static class CustomExtensionsMethods
-    {
-        public static IServiceCollection AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddDbContext<OrderingContext>(options =>
-                {
-                    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
-                        sqlServerOptionsAction: sqlOptions =>
-                        {
-                            sqlOptions.MigrationsAssembly("Ordering.Infrastructure");
-                            sqlOptions.EnableRetryOnFailure(maxRetryCount: 15, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
-                        });
-                }, ServiceLifetime.Scoped  //Showing explicitly that the DbContext is shared across the HTTP request scope (graph of objects started in the HTTP request)
-            );
-
-            return services;
-        }
-    }
- }
+}
