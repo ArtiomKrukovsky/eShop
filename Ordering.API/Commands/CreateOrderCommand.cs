@@ -8,15 +8,13 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using Ordering.API.Interfaces;
 
 namespace Ordering.API.Commands
 {
     [DataContract]
-    public class CreateOrderCommand : IRequest<bool>
+    public class CreateOrderCommand : ICommand<bool>
     {
-        [DataMember]
-        private readonly List<OrderItemModel> _orderItems;
-
         [DataMember]
         public string UserId { get; private set; }
 
@@ -53,18 +51,13 @@ namespace Ordering.API.Commands
         [DataMember]
         public int CardTypeId { get; private set; }
 
-        [DataMember]
-        public IEnumerable<OrderItemModel> OrderItems => _orderItems;
+        [DataMember] 
+        public IEnumerable<OrderItemModel> OrderItems { get; private set; }
 
-        public CreateOrderCommand()
+        public CreateOrderCommand(IEnumerable<OrderItemModel> orderItems, string userId, string userName, string city, string street, string state, string country, string zipcode,
+            string cardNumber, string cardHolderName, DateTime cardExpiration, string cardSecurityNumber, int cardTypeId)
         {
-            _orderItems = new List<OrderItemModel>();
-        }
-
-        public CreateOrderCommand(List<OrderItemModel> orderItems, string userId, string userName, string city, string street, string state, string country, string zipcode,
-            string cardNumber, string cardHolderName, DateTime cardExpiration, string cardSecurityNumber, int cardTypeId): this()
-        {
-            _orderItems = orderItems;
+            OrderItems = orderItems;
             UserId = userId;
             UserName = userName;
             City = city;
