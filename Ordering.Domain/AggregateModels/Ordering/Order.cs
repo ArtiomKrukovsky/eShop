@@ -3,6 +3,7 @@ using Ordering.Domain.Seedwork;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Ordering.Domain.Events;
 
 namespace Ordering.Domain.AggregateModels.Ordering
 {
@@ -15,6 +16,9 @@ namespace Ordering.Domain.AggregateModels.Ordering
 
         // Address is a Value Object pattern example persisted as EF Core 2.0 owned entity
         public Address Address { get; private set; }
+
+        public int? GetBuyerId => _buyerId;
+        private int? _buyerId;
 
         public OrderStatus OrderStatus { get; private set; }
         private int _orderStatusId;
@@ -31,10 +35,11 @@ namespace Ordering.Domain.AggregateModels.Ordering
         private readonly List<OrderItem> _orderItems;
         public IReadOnlyCollection<OrderItem> OrderItems => _orderItems;
 
+        private int? _paymentMethodId;
+
         public static Order NewDraft()
         {
-            var order = new Order();
-            order._isDraft = true;
+            var order = new Order { _isDraft = true };
             return order;
         }
 
@@ -45,15 +50,17 @@ namespace Ordering.Domain.AggregateModels.Ordering
         }
 
         public Order(string userId, string userName, Address address, int cardTypeId, string cardNumber, string cardSecurityNumber,
-                string cardHolderName, DateTime cardExpiration) : this()
+            string cardHolderName, DateTime cardExpiration, int? buyerId = null, int? paymentMethodId = null) : this()
         {
+            _buyerId = buyerId;
+            _paymentMethodId = paymentMethodId;
             _orderStatusId = OrderStatus.Submitted.Id;
             _orderDate = DateTime.UtcNow;
             Address = address;
 
             // Add the OrderStarterDomainEvent to the domain events collection 
             // to be raised/dispatched when comitting changes into the Database [ After DbContext.SaveChanges() ]
-            // AddOrderStartedDomainEvent(userId, userName, cardTypeId, cardNumber,cardSecurityNumber, cardHolderName, cardExpiration);
+            AddOrderStartedDomainEvent(userId, userName, cardTypeId, cardNumber, cardSecurityNumber, cardHolderName, cardExpiration);
         }
 
         // DDD Patterns comment
@@ -62,8 +69,8 @@ namespace Ordering.Domain.AggregateModels.Ordering
         // in order to maintain consistency between the whole Aggregate. 
         public void AddOrderItem(int productId, string productName, decimal unitPrice, decimal discount, string pictureUrl, int units = 1)
         {
-            var existingOrderForProduct = _orderItems.Where(o => o.ProductId == productId)
-                .SingleOrDefault();
+            var existingOrderForProduct = _orderItems
+                .SingleOrDefault(o => o.ProductId == productId);
 
             if (existingOrderForProduct != null)
             {
@@ -83,6 +90,16 @@ namespace Ordering.Domain.AggregateModels.Ordering
                 var orderItem = new OrderItem(productId, productName, unitPrice, discount, pictureUrl, units);
                 _orderItems.Add(orderItem);
             }
+        }
+
+        public void SetPaymentId(int id)
+        {
+            _paymentMethodId = id;
+        }
+
+        public void SetBuyerId(int id)
+        {
+            _buyerId = id;
         }
 
         //public void SetAwaitingValidationStatus()
@@ -156,15 +173,15 @@ namespace Ordering.Domain.AggregateModels.Ordering
         //    }
         //}
 
-        //private void AddOrderStartedDomainEvent(string userId, string userName, int cardTypeId, string cardNumber,
-        //        string cardSecurityNumber, string cardHolderName, DateTime cardExpiration)
-        //{
-        //    var orderStartedDomainEvent = new OrderStartedDomainEvent(this, userId, userName, cardTypeId,
-        //                                                              cardNumber, cardSecurityNumber,
-        //                                                              cardHolderName, cardExpiration);
+        private void AddOrderStartedDomainEvent(string userId, string userName, int cardTypeId, string cardNumber,
+                string cardSecurityNumber, string cardHolderName, DateTime cardExpiration)
+        {
+            var orderStartedDomainEvent = new OrderStartedDomainEvent(this, userId, userName, cardTypeId,
+                                                                      cardNumber, cardSecurityNumber,
+                                                                      cardHolderName, cardExpiration);
 
-        //    this.AddDomainEvent(orderStartedDomainEvent);
-        //}
+            AddDomainEvent(orderStartedDomainEvent);
+        }
 
         private void StatusChangeException(OrderStatus orderStatusToChange)
         {
