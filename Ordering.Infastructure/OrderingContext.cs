@@ -16,7 +16,7 @@ namespace Ordering.Infrastructure
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Buyer> Buyers { get; set; }
-        public DbSet<PaymentMethod> Payments { get; set; }
+        public DbSet<PaymentMethod> PaymentMethods { get; set; }
         public DbSet<CardType> CardTypes { get; set; }
         public DbSet<OrderStatus> OrderStatus { get; set; }
 

@@ -43,6 +43,13 @@ namespace Ordering.Infrastructure.EntityConfigurations
                 .IsRequired();
 
             paymentConfiguration
+                .Property<string>("_securityNumber")
+                .UsePropertyAccessMode(PropertyAccessMode.Field)
+                .HasColumnName("SecurityNumber")
+                .HasMaxLength(3)
+                .IsRequired();
+
+            paymentConfiguration
                 .Property<DateTime>("_expiration")
                 .UsePropertyAccessMode(PropertyAccessMode.Field)
                 .HasColumnName("Expiration")

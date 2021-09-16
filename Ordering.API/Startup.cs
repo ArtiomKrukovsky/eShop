@@ -1,23 +1,18 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Ordering.Infrastructure.Repositories;
 using Ordering.Domain.AggregateModels.Ordering;
-using Microsoft.EntityFrameworkCore;
-using Ordering.Infrastructure;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Diagnostics;
 using Ordering.API.Behaviors;
 using Ordering.API.Extensions;
-using Ordering.API.Options;
-using Ordering.API.Queries;
+using Ordering.Domain.AggregateModels.Buyer;
 
 namespace Ordering.API
 {
@@ -40,6 +35,7 @@ namespace Ordering.API
 
             // Configure Mediator
             services.AddMediatR(Assembly.GetExecutingAssembly());
+            // Add Validators
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
@@ -47,6 +43,7 @@ namespace Ordering.API
 
             // Configure Repositories
             services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IBuyerRepository, BuyerRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

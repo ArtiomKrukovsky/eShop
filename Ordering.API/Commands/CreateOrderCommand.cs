@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Ordering.API.Interfaces;
 
 namespace Ordering.API.Commands
@@ -104,10 +105,12 @@ namespace Ordering.API.Commands
         public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, bool>
         {
             private readonly IOrderRepository _orderRepository;
+            private readonly ILogger<CreateOrderCommandHandler> _logger;
 
-            public CreateOrderCommandHandler(IOrderRepository orderRepository)
+            public CreateOrderCommandHandler(IOrderRepository orderRepository, ILogger<CreateOrderCommandHandler> logger)
             {
                 _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
+                _logger = logger;
             }
 
             public async Task<bool> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
@@ -120,9 +123,12 @@ namespace Ordering.API.Commands
                     order.AddOrderItem(item.ProductId, item.ProductName, item.UnitPrice, item.Discount, item.PictureUrl, item.Units);
                 }
 
+                _logger.LogInformation("----- Creating Order - Order: {@Order}", order);
+
                 await _orderRepository.AddAsync(order);
 
-                return true;
+                return await _orderRepository.UnitOfWork
+                    .SaveEntitiesAsync(cancellationToken);
             }
         }
     }

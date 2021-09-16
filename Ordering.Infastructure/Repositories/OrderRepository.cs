@@ -20,7 +20,6 @@ namespace Ordering.Infrastructure.Repositories
         public async Task AddAsync(Order order)
         {
             await _context.Orders.AddAsync(order);
-            await _context.SaveChangesAsync();
         }
 
         public async Task<Order> GetAsync(int orderId)
@@ -48,7 +47,6 @@ namespace Ordering.Infrastructure.Repositories
         public void Update(Order order)
         {
             _context.Entry(order).State = EntityState.Modified;
-            _context.SaveChanges();
         }
     }
 }
